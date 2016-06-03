@@ -1,0 +1,27 @@
+function inverseFilter(Hd, Fs,method)
+
+T = 1.15;
+
+if (method==1)
+    [F,w] = freqz(Hd,1,1000,Fs);
+    F2 = abs(F) + T;
+    F3 = 1./F2;
+
+    F3 = F3 - min(F3);
+    F3 = F3 ./ max(F3);
+    %F3(F3>0.50) = 1;
+    %F3(F3<=0.50) = 0.00001;
+else
+    T = 0.10;
+    F3(find(abs(F)>T)) = 1./F
+end
+
+figure;
+plot(w, abs(F));
+hold on;
+plot(w, abs(F3),'r');
+
+[b,a] = invfreqz(F3, 2 * pi * w ./ 16000, length(Hd), 1);
+
+figure;
+freqz(b,a,1000,Fs);
